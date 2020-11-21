@@ -35,6 +35,24 @@ export default class App extends Component {
     });
   };
 
+  onToggleCompleted = (id) => {
+    this.setState(({ todoData }) => {
+      const index = todoData.findIndex((el) => el.id === id);
+      const oldItem = todoData[index];
+      const newItem = { ...oldItem, completed: !oldItem.completed };
+      const newArray = [...todoData.slice(0, index), newItem, ...todoData.slice(index + 1)];
+
+      return {
+        todoData: newArray,
+      };
+    });
+  };
+
+  onToggleEditing = (id) => {
+    // eslint-disable-next-line no-console
+    console.log('editing', id);
+  };
+
   createTodoItem(label, time) {
     return {
       // eslint-disable-next-line no-plusplus
@@ -42,6 +60,7 @@ export default class App extends Component {
       label,
       time,
       completed: false,
+      editing: false,
     };
   }
 
@@ -54,7 +73,12 @@ export default class App extends Component {
       <section className="todoapp">
         <NewTaskForm onAdded={this.addItem} />
         <section className="main">
-          <TaskList todos={todoData} onDeleted={this.deleteItem} />
+          <TaskList
+            todos={todoData}
+            onDeleted={this.deleteItem}
+            onToggleCompleted={this.onToggleCompleted}
+            onToggleEditing={this.onToggleEditing}
+          />
           <Footer todoCount={todoCount} />
         </section>
       </section>
