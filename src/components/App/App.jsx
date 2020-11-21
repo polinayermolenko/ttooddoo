@@ -35,22 +35,28 @@ export default class App extends Component {
     });
   };
 
+  toggleItem = (arr, id, propName) => {
+    const index = arr.findIndex((el) => el.id === id);
+    const oldItem = arr[index];
+    const newItem = { ...oldItem, [propName]: !oldItem[propName] };
+
+    return [...arr.slice(0, index), newItem, ...arr.slice(index + 1)];
+  };
+
   onToggleCompleted = (id) => {
     this.setState(({ todoData }) => {
-      const index = todoData.findIndex((el) => el.id === id);
-      const oldItem = todoData[index];
-      const newItem = { ...oldItem, completed: !oldItem.completed };
-      const newArray = [...todoData.slice(0, index), newItem, ...todoData.slice(index + 1)];
-
       return {
-        todoData: newArray,
+        todoData: this.toggleItem(todoData, id, 'completed'),
       };
     });
   };
 
   onToggleEditing = (id) => {
-    // eslint-disable-next-line no-console
-    console.log('editing', id);
+    this.setState(({ todoData }) => {
+      return {
+        todoData: this.toggleItem(todoData, id, 'editing'),
+      };
+    });
   };
 
   createTodoItem(label, time) {
