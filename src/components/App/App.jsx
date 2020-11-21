@@ -14,6 +14,27 @@ export default class App extends Component {
     ],
   };
 
+  deleteItem = (id) => {
+    this.setState(({ todoData }) => {
+      const index = todoData.findIndex((el) => el.id === id);
+      const newArray = [...todoData.slice(0, index), ...todoData.slice(index + 1)];
+
+      return {
+        todoData: newArray,
+      };
+    });
+  };
+
+  addItem = (text) => {
+    this.setState(({ todoData }) => {
+      const newArray = [...todoData, this.createTodoItem(text, '10 minutes ago')];
+
+      return {
+        todoData: newArray,
+      };
+    });
+  };
+
   createTodoItem(label, time) {
     return {
       // eslint-disable-next-line no-plusplus
@@ -31,9 +52,9 @@ export default class App extends Component {
 
     return (
       <section className="todoapp">
-        <NewTaskForm />
+        <NewTaskForm onAdded={this.addItem} />
         <section className="main">
-          <TaskList todos={todoData} />
+          <TaskList todos={todoData} onDeleted={this.deleteItem} />
           <Footer todoCount={todoCount} />
         </section>
       </section>
