@@ -7,6 +7,8 @@ import Footer from '../Footer/Footer';
 export default class App extends Component {
   maxId = 100;
 
+  time = new Date();
+
   state = {
     todoData: [
       this.createTodoItem('Drink Tea'),
@@ -14,6 +16,12 @@ export default class App extends Component {
       this.createTodoItem('Have a lunch'),
     ],
     filter: 'all',
+  };
+
+  getTime = () => {
+    const date = new Date();
+    const sdate = `created ${formatDistanceToNow(date)}`;
+    return sdate;
   };
 
   deleteItem = (id) => {
@@ -106,7 +114,7 @@ export default class App extends Component {
       // eslint-disable-next-line no-plusplus
       id: this.maxId++,
       label,
-      time: `created ${formatDistanceToNow(new Date(), { includeSeconds: true })}`,
+      time: `created ${formatDistanceToNow(this.time)}`,
       completed: false,
       editing: false,
     };
@@ -131,6 +139,7 @@ export default class App extends Component {
             onToggleCompleted={this.onToggleCompleted}
             onToggleEditing={this.onToggleEditing}
             onEdit={this.editItem}
+            onBlur={this.onToggleEditing}
           />
           <Footer
             todoCount={todoCount}
