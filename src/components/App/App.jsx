@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { formatDistanceToNow } from 'date-fns';
 import NewTaskForm from '../NewTaskForm/NewTaskForm';
 import TaskList from '../TaskList/TaskList';
 import Footer from '../Footer/Footer';
@@ -7,21 +6,13 @@ import Footer from '../Footer/Footer';
 export default class App extends Component {
   maxId = 100;
 
-  time = new Date();
-
   state = {
     todoData: [
       this.createTodoItem('Drink Tea'),
-      this.createTodoItem('Make Awesome App'),
+      this.createTodoItem('Tidy my room'),
       this.createTodoItem('Have a lunch'),
     ],
     filter: 'all',
-  };
-
-  getTime = () => {
-    const date = new Date();
-    const sdate = `created ${formatDistanceToNow(date)}`;
-    return sdate;
   };
 
   deleteItem = (id) => {
@@ -114,16 +105,15 @@ export default class App extends Component {
       // eslint-disable-next-line no-plusplus
       id: this.maxId++,
       label,
-      time: `created ${formatDistanceToNow(this.time)}`,
       completed: false,
       editing: false,
+      time: new Date(),
     };
   }
 
   render() {
     const { todoData, filter } = this.state;
-    const countDone = todoData.filter((el) => el.completed).length;
-    const todoCount = todoData.length - countDone;
+    const todoCount = todoData.filter((el) => !el.completed).length;
     const visibleItems = this.filterItems(todoData, filter);
 
     return (

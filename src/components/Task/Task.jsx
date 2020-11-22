@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import TaskEdit from '../TaskEdit/TaskEdit';
+import TaskDate from '../TaskDate/TaskDate';
 
 const Task = ({
   id,
@@ -10,22 +11,22 @@ const Task = ({
   onToggleCompleted,
   onToggleEditing,
   label,
-  time,
   editing,
   completed,
+  time,
 }) => {
   return (
-    <li key={id} className={`${completed ? 'completed' : ''}${editing ? 'editing' : ''}`}>
+    <li key={id} className={`${completed ? 'completed' : ''} ${editing ? 'editing' : ''}`}>
       <div className="view">
         <input className="toggle" type="checkbox" onClick={onToggleCompleted} />
         <label>
           <span className="description">{label}</span>
-          <span className="created">{time}</span>
+          <TaskDate time={time} />
         </label>
         <button type="button" aria-label="Edit Task" className="icon icon-edit" onClick={onToggleEditing} />
         <button type="button" aria-label="Delete Task" className="icon icon-destroy" onClick={onDeleted} />
       </div>
-      {editing ? <TaskEdit onBlur={onBlur /* () => onBlur(id) */} onEdit={onEdit} label={label} id={id} /> : null}
+      {editing ? <TaskEdit onBlur={onBlur} onEdit={onEdit} label={label} id={id} /> : null}
     </li>
   );
 };
