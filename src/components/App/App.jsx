@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { formatDistanceToNow } from 'date-fns';
 import NewTaskForm from '../NewTaskForm/NewTaskForm';
 import TaskList from '../TaskList/TaskList';
 import Footer from '../Footer/Footer';
@@ -8,9 +9,9 @@ export default class App extends Component {
 
   state = {
     todoData: [
-      this.createTodoItem('Drink Tea', 'created 17 seconds ago'),
-      this.createTodoItem('Make Awesome App', 'created 5 minutes ago'),
-      this.createTodoItem('Have a lunch', 'created 5 minutes ago'),
+      this.createTodoItem('Drink Tea'),
+      this.createTodoItem('Make Awesome App'),
+      this.createTodoItem('Have a lunch'),
     ],
   };
 
@@ -27,7 +28,21 @@ export default class App extends Component {
 
   addItem = (text) => {
     this.setState(({ todoData }) => {
-      const newArray = [...todoData, this.createTodoItem(text, '10 minutes ago')];
+      const newArray = [...todoData, this.createTodoItem(text)];
+
+      return {
+        todoData: newArray,
+      };
+    });
+  };
+
+  editItem = (id, text) => {
+    this.setState(({ todoData }) => {
+      const index = todoData.findIndex((el) => el.id === id);
+      const oldItem = todoData[index];
+      const newItem = { ...oldItem, label: text, editing: !oldItem.editing };
+
+      const newArray = [...todoData.slice(0, index), newItem, ...todoData.slice(index + 1)];
 
       return {
         todoData: newArray,
@@ -59,12 +74,12 @@ export default class App extends Component {
     });
   };
 
-  createTodoItem(label, time) {
+  createTodoItem(label) {
     return {
       // eslint-disable-next-line no-plusplus
       id: this.maxId++,
       label,
-      time,
+      time: `created ${formatDistanceToNow(new Date(), { includeSeconds: true })}`,
       completed: false,
       editing: false,
     };
@@ -77,13 +92,17 @@ export default class App extends Component {
 
     return (
       <section className="todoapp">
-        <NewTaskForm onAdded={this.addItem} />
+        <header className="header">
+          <h1>todos</h1>
+          <NewTaskForm onAdded={this.addItem} />
+        </header>
         <section className="main">
           <TaskList
             todos={todoData}
             onDeleted={this.deleteItem}
             onToggleCompleted={this.onToggleCompleted}
             onToggleEditing={this.onToggleEditing}
+            onEdit={this.editItem}
           />
           <Footer todoCount={todoCount} />
         </section>

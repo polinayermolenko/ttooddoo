@@ -29,16 +29,13 @@ export default class NewTaskForm extends Component {
   render() {
     const { label } = this.state;
     return (
-      <header className="header">
-        <h1>todos</h1>
-        <input
-          className="new-todo"
-          placeholder="What needs to be done?"
-          onChange={this.onLabelChange}
-          value={label}
-          onKeyDown={this.handleKeyPress}
-        />
-      </header>
+      <input
+        className="new-todo"
+        placeholder="What needs to be done?"
+        onChange={this.onLabelChange}
+        value={label}
+        onKeyDown={this.handleKeyPress}
+      />
     );
   }
 }
