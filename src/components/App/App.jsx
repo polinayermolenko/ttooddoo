@@ -13,6 +13,7 @@ export default class App extends Component {
       this.createTodoItem('Make Awesome App'),
       this.createTodoItem('Have a lunch'),
     ],
+    filter: 'all',
   };
 
   deleteItem = (id) => {
@@ -74,6 +75,32 @@ export default class App extends Component {
     });
   };
 
+  filterItems = (items, filter) => {
+    switch (filter) {
+      case 'all':
+        return items;
+      case 'active':
+        return items.filter((item) => !item.completed);
+      case 'completed':
+        return items.filter((item) => item.completed);
+      default:
+        return items;
+    }
+  };
+
+  onFilterChange = (filter) => {
+    this.setState({ filter });
+  };
+
+  onClear = () => {
+    this.setState(({ todoData }) => {
+      const newArr = todoData.filter((item) => !item.completed);
+      return {
+        todoData: newArr,
+      };
+    });
+  };
+
   createTodoItem(label) {
     return {
       // eslint-disable-next-line no-plusplus
@@ -86,9 +113,10 @@ export default class App extends Component {
   }
 
   render() {
-    const { todoData } = this.state;
+    const { todoData, filter } = this.state;
     const countDone = todoData.filter((el) => el.completed).length;
     const todoCount = todoData.length - countDone;
+    const visibleItems = this.filterItems(todoData, filter);
 
     return (
       <section className="todoapp">
@@ -98,13 +126,19 @@ export default class App extends Component {
         </header>
         <section className="main">
           <TaskList
-            todos={todoData}
+            todos={visibleItems}
             onDeleted={this.deleteItem}
             onToggleCompleted={this.onToggleCompleted}
             onToggleEditing={this.onToggleEditing}
             onEdit={this.editItem}
           />
-          <Footer todoCount={todoCount} />
+          <Footer
+            todoCount={todoCount}
+            filter={filter}
+            onFilterChange={this.onFilterChange}
+            onClear={this.onClear}
+            todoData={todoData}
+          />
         </section>
       </section>
     );
