@@ -17,8 +17,7 @@ export default class App extends Component {
 
   deleteItem = (id) => {
     this.setState(({ todoData }) => {
-      const index = todoData.findIndex((el) => el.id === id);
-      const newArray = [...todoData.slice(0, index), ...todoData.slice(index + 1)];
+      const newArray = todoData.filter((el) => el.id !== id);
 
       return {
         todoData: newArray,
@@ -38,11 +37,12 @@ export default class App extends Component {
 
   editItem = (id, text) => {
     this.setState(({ todoData }) => {
-      const index = todoData.findIndex((el) => el.id === id);
-      const oldItem = todoData[index];
-      const newItem = { ...oldItem, label: text, editing: !oldItem.editing };
-
-      const newArray = [...todoData.slice(0, index), newItem, ...todoData.slice(index + 1)];
+      const newArray = todoData.map((el) => {
+        if (el.id === id) {
+          return { ...el, label: text, editing: !el.editing };
+        }
+        return el;
+      });
 
       return {
         todoData: newArray,
@@ -51,11 +51,12 @@ export default class App extends Component {
   };
 
   toggleItem = (arr, id, propName) => {
-    const index = arr.findIndex((el) => el.id === id);
-    const oldItem = arr[index];
-    const newItem = { ...oldItem, [propName]: !oldItem[propName] };
-
-    return [...arr.slice(0, index), newItem, ...arr.slice(index + 1)];
+    return arr.map((el) => {
+      if (el.id === id) {
+        return { ...el, [propName]: !el[propName] };
+      }
+      return el;
+    });
   };
 
   onToggleCompleted = (id) => {

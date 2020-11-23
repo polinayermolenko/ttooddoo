@@ -18,7 +18,7 @@ const Task = ({
   return (
     <li key={id} className={`${completed ? 'completed' : ''} ${editing ? 'editing' : ''}`}>
       <div className="view">
-        <input className="toggle" type="checkbox" onClick={onToggleCompleted} />
+        <input className="toggle" type="checkbox" onClick={onToggleCompleted} checked={completed} />
         <label>
           <span className="description">{label}</span>
           <TaskDate time={time} />
