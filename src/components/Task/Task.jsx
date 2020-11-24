@@ -10,6 +10,7 @@ const Task = ({
   onEdit,
   onToggleCompleted,
   onToggleEditing,
+  onEscPress,
   label,
   editing,
   completed,
@@ -18,15 +19,21 @@ const Task = ({
   return (
     <li key={id} className={`${completed ? 'completed' : ''} ${editing ? 'editing' : ''}`}>
       <div className="view">
-        <input className="toggle" type="checkbox" onClick={onToggleCompleted} checked={completed} />
+        <input className="toggle" type="checkbox" onClick={onToggleCompleted} defaultChecked={completed} />
         <label>
           <span className="description">{label}</span>
           <TaskDate time={time} />
         </label>
-        <button type="button" aria-label="Edit Task" className="icon icon-edit" onClick={onToggleEditing} />
+        <button
+          type="button"
+          aria-label="Edit Task"
+          className={`${completed ? 'icon icon-edit icon-edit-disabled' : 'icon icon-edit'}`}
+          onClick={onToggleEditing}
+          disabled={completed}
+        />
         <button type="button" aria-label="Delete Task" className="icon icon-destroy" onClick={onDeleted} />
       </div>
-      {editing ? <TaskEdit onBlur={onBlur} onEdit={onEdit} label={label} id={id} /> : null}
+      {editing ? <TaskEdit onEscPress={onEscPress} onBlur={onBlur} onEdit={onEdit} label={label} id={id} /> : null}
     </li>
   );
 };
@@ -37,12 +44,14 @@ Task.defaultProps = {
   onToggleEditing: () => {},
   onEdit: () => {},
   onBlur: () => {},
+  onEscPress: () => {},
 };
 
 Task.propTypes = {
   onDeleted: PropTypes.func,
   onEdit: PropTypes.func,
   onBlur: PropTypes.func,
+  onEscPress: PropTypes.func,
   onToggleCompleted: PropTypes.func,
   onToggleEditing: PropTypes.func,
   editing: PropTypes.bool.isRequired,

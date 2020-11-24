@@ -16,10 +16,13 @@ export default class TaskEdit extends Component {
   };
 
   handleKeyPress = (evt) => {
-    const { onEdit, id } = this.props;
+    const { onEdit, onEscPress, id } = this.props;
     const { labelEdit } = this.state;
     if (evt.key === 'Enter') {
       onEdit(id, labelEdit);
+    }
+    if (evt.key === 'Escape') {
+      onEscPress(evt);
     }
   };
 
@@ -48,11 +51,13 @@ export default class TaskEdit extends Component {
 TaskEdit.defaultProps = {
   onBlur: () => {},
   onEdit: () => {},
+  onEscPress: () => {},
 };
 
 TaskEdit.propTypes = {
   label: PropTypes.string.isRequired,
   onBlur: PropTypes.func,
   onEdit: PropTypes.func,
+  onEscPress: PropTypes.func,
   id: PropTypes.number.isRequired,
 };

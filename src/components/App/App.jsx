@@ -15,6 +15,14 @@ export default class App extends Component {
     filter: 'all',
   };
 
+  handleKeyDown = () => {
+    const { todoData } = this.state;
+    const editingItem = todoData.find((item) => item.editing === true);
+    if (typeof editingItem === 'object') {
+      this.onToggleEditing(editingItem.id);
+    }
+  };
+
   deleteItem = (id) => {
     this.setState(({ todoData }) => {
       const newArray = todoData.filter((el) => el.id !== id);
@@ -131,6 +139,7 @@ export default class App extends Component {
             onToggleEditing={this.onToggleEditing}
             onEdit={this.editItem}
             onBlur={this.onToggleEditing}
+            onKeyDown={this.handleKeyDown}
           />
           <Footer
             todoCount={todoCount}

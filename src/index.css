@@ -271,6 +271,10 @@ body {
   content: '✎';
 }
 
+.todo-list li .icon-edit-disabled {
+  cursor: not-allowed;
+}
+
 .todo-list li .edit {
   display: none;
 }

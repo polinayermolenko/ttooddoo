@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Task from '../Task/Task';
 
-const TaskList = ({ todos, onDeleted, onEdit, onBlur, onToggleCompleted, onToggleEditing }) => {
+const TaskList = ({ todos, onDeleted, onEdit, onBlur, onKeyDown, onToggleCompleted, onToggleEditing }) => {
   const elements = todos.map((item) => {
     const { id } = item;
     return (
@@ -14,6 +14,7 @@ const TaskList = ({ todos, onDeleted, onEdit, onBlur, onToggleCompleted, onToggl
         onToggleEditing={() => onToggleEditing(id)}
         onEdit={onEdit}
         onBlur={onBlur}
+        onEscPress={onKeyDown}
       />
     );
   });
@@ -27,11 +28,13 @@ TaskList.defaultProps = {
   onBlur: () => {},
   onToggleCompleted: () => {},
   onToggleEditing: () => {},
+  onKeyDown: () => {},
 };
 
 TaskList.propTypes = {
   todos: PropTypes.arrayOf(PropTypes.object).isRequired,
   onDeleted: PropTypes.func,
+  onKeyDown: PropTypes.func,
   onEdit: PropTypes.func,
   onBlur: PropTypes.func,
   onToggleCompleted: PropTypes.func,
