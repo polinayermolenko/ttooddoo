@@ -8,9 +8,9 @@ export default class App extends Component {
 
   state = {
     todoData: [
-      this.createTodoItem('Drink Tea'),
-      this.createTodoItem('Tidy my room'),
-      this.createTodoItem('Have a lunch'),
+      this.createTodoItem('Drink Tea', '01', '30'),
+      this.createTodoItem('Tidy my room', '01', '00'),
+      this.createTodoItem('Have a lunch', '00', '30'),
     ],
     filter: 'all',
   };
@@ -33,9 +33,9 @@ export default class App extends Component {
     });
   };
 
-  addItem = (text) => {
+  addItem = (text, minutes, seconds) => {
     this.setState(({ todoData }) => {
-      const newArray = [...todoData, this.createTodoItem(text)];
+      const newArray = [...todoData, this.createTodoItem(text, minutes, seconds)];
 
       return {
         todoData: newArray,
@@ -109,7 +109,7 @@ export default class App extends Component {
     });
   };
 
-  createTodoItem(label) {
+  createTodoItem(label, minutes, seconds) {
     return {
       // eslint-disable-next-line no-plusplus
       id: this.maxId++,
@@ -117,6 +117,8 @@ export default class App extends Component {
       completed: false,
       editing: false,
       time: new Date(),
+      minutesTimer: minutes,
+      secondsTimer: seconds,
     };
   }
 

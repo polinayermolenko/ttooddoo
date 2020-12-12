@@ -6,11 +6,15 @@ import TaskEdit from '../TaskEdit/TaskEdit';
 export default class Task extends Component {
   intervalId = null;
 
+  timerId = null;
+
   constructor(props) {
     super(props);
     this.state = {
       time: props.time,
       interval: formatDistanceToNow(props.time, { includeSeconds: true }),
+      minutesTimer: Number(props.minutesTimer),
+      secondsTimer: Number(props.secondsTimer),
     };
   }
 
@@ -21,12 +25,47 @@ export default class Task extends Component {
 
   componentWillUnmount() {
     clearInterval(this.intervalId);
+    clearInterval(this.timerId);
   }
 
   getTime() {
     const { time } = this.state;
     this.setState(() => ({ interval: formatDistanceToNow(time, { includeSeconds: true }) }));
   }
+
+  startTimer = () => {
+    if (!this.timerId) {
+      this.timerId = setInterval(this.updateTimer, 1000);
+    }
+  };
+
+  updateTimer = () => {
+    let { minutesTimer, secondsTimer } = this.state;
+    if (secondsTimer) {
+      secondsTimer -= 1;
+    } else if (!secondsTimer && minutesTimer) {
+      secondsTimer = 59;
+      minutesTimer -= 1;
+    } else {
+      clearInterval(this.timerId);
+    }
+
+    this.setState(() => ({ minutesTimer, secondsTimer }));
+  };
+
+  pauseTimer = () => {
+    clearInterval(this.timerId);
+    this.timerId = null;
+  };
+
+  transformTimer = (value) => {
+    let timerValue = value;
+
+    if (timerValue < 10) {
+      timerValue = `0${timerValue}`;
+    }
+    return timerValue;
+  };
 
   render() {
     const {
@@ -43,13 +82,21 @@ export default class Task extends Component {
     } = this.props;
 
     const { interval } = this.state;
+    let { minutesTimer, secondsTimer } = this.state;
+    minutesTimer = this.transformTimer(minutesTimer);
+    secondsTimer = this.transformTimer(secondsTimer);
 
     return (
       <li key={id} className={`${completed ? 'completed' : ''} ${editing ? 'editing' : ''}`}>
         <div className="view">
           <input className="toggle" type="checkbox" onClick={onToggleCompleted} defaultChecked={completed} />
           <label>
-            <span className="description">{label}</span>
+            <span className="title">{label}</span>
+            <span className="description">
+              <button type="button" className="icon icon-play" aria-label="play" onClick={this.startTimer} />
+              <button type="button" className="icon icon-pause" aria-label="pause" onClick={this.pauseTimer} />
+              <p>{`${minutesTimer}:${secondsTimer}`}</p>
+            </span>
             <span className="created">created {interval} ago</span>
           </label>
           <button
@@ -90,4 +137,6 @@ Task.propTypes = {
   id: PropTypes.number.isRequired,
   updateInterval: PropTypes.number,
   time: PropTypes.instanceOf(Date).isRequired,
+  minutesTimer: PropTypes.string.isRequired,
+  secondsTimer: PropTypes.string.isRequired,
 };
