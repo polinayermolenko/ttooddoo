@@ -64,7 +64,8 @@ const Task = (props) => {
     completed,
   } = props;
 
-  const clazz = classNames({ completed: completed, editing: editing });
+  const clazz = classNames({ completed, editing });
+  const editClass = classNames('icon', 'icon-edit', { 'icon-edit-disabled': completed });
 
   return (
     <li key={id} className={clazz}>
@@ -85,7 +86,7 @@ const Task = (props) => {
         <button
           type="button"
           aria-label="Edit Task"
-          className={`${completed ? 'icon icon-edit icon-edit-disabled' : 'icon icon-edit'}`}
+          className={editClass}
           onClick={onToggleEditing}
           disabled={completed}
         />
