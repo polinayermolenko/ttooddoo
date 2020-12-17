@@ -1,19 +1,14 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 const DEFAULT_TIMER = '00';
 
-export default class NewTaskForm extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      label: '',
-      minutes: '',
-      seconds: '',
-    };
-  }
+const NewTaskForm = (props) => {
+  const [label, setLabel] = useState('');
+  const [minutes, setMinutes] = useState('');
+  const [seconds, setSeconds] = useState('');
 
-  checkTimerFormat = (value, inputId) => {
+  const checkTimerFormat = (value, inputId) => {
     let timerValue = null;
 
     if (Number.isNaN(Number(value))) {
@@ -27,69 +22,57 @@ export default class NewTaskForm extends Component {
     return timerValue;
   };
 
-  onLabelChange = (evt) => {
-    this.setState({ label: evt.target.value });
+  const onLabelChange = (evt) => {
+    setLabel(evt.target.value);
   };
 
-  onMinutesChange = (evt) => {
-    this.setState({ minutes: this.checkTimerFormat(evt.target.value, evt.target.id) });
+  const onMinutesChange = (evt) => {
+    setMinutes(checkTimerFormat(evt.target.value, evt.target.id));
   };
 
-  onSecondsChange = (evt) => {
-    this.setState({ seconds: this.checkTimerFormat(evt.target.value, evt.target.id) });
+  const onSecondsChange = (evt) => {
+    setSeconds(checkTimerFormat(evt.target.value, evt.target.id));
   };
 
-  handleKeyPress = (evt) => {
-    const { onAdded } = this.props;
-    const { label } = this.state;
-    let { minutes, seconds } = this.state;
-
+  const handleKeyPress = (evt) => {
+    const { onAdded } = props;
     if (evt.key === 'Enter') {
-      onAdded(label, (minutes = minutes || DEFAULT_TIMER), (seconds = seconds || DEFAULT_TIMER));
-      this.setState({
-        label: '',
-        minutes: '',
-        seconds: '',
-      });
+      onAdded(label, minutes || DEFAULT_TIMER, seconds || DEFAULT_TIMER);
+      setLabel('');
+      setMinutes('');
+      setSeconds('');
     }
   };
 
-  render() {
-    const { label, minutes, seconds } = this.state;
-    return (
-      <form className="new-todo-form">
-        <input
-          id="text"
-          className="new-todo"
-          placeholder="What needs to be done?"
-          // eslint-disable-next-line jsx-a11y/no-autofocus
-          autoFocus
-          onChange={this.onLabelChange}
-          onKeyDown={this.handleKeyPress}
-          value={label}
-        />
-        <input
-          id="minutes"
-          className="new-todo-form__timer"
-          placeholder="Min"
-          // eslint-disable-next-line jsx-a11y/no-autofocus
-          autoFocus
-          onChange={this.onMinutesChange}
-          value={minutes}
-        />
-        <input
-          id="seconds"
-          className="new-todo-form__timer"
-          placeholder="Sec"
-          // eslint-disable-next-line jsx-a11y/no-autofocus
-          autoFocus
-          onChange={this.onSecondsChange}
-          value={seconds}
-        />
-      </form>
-    );
-  }
-}
+  return (
+    <form className="new-todo-form">
+      <input
+        id="text"
+        className="new-todo"
+        placeholder="What needs to be done?"
+        // eslint-disable-next-line jsx-a11y/no-autofocus
+        autoFocus
+        onChange={onLabelChange}
+        onKeyDown={handleKeyPress}
+        value={label}
+      />
+      <input
+        id="minutes"
+        className="new-todo-form__timer"
+        placeholder="Min"
+        onChange={onMinutesChange}
+        value={minutes}
+      />
+      <input
+        id="seconds"
+        className="new-todo-form__timer"
+        placeholder="Sec"
+        onChange={onSecondsChange}
+        value={seconds}
+      />
+    </form>
+  );
+};
 
 NewTaskForm.defaultProps = {
   onAdded: () => {},
@@ -98,3 +81,5 @@ NewTaskForm.defaultProps = {
 NewTaskForm.propTypes = {
   onAdded: PropTypes.func,
 };
+
+export default NewTaskForm;

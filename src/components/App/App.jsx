@@ -1,64 +1,33 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import NewTaskForm from '../NewTaskForm/NewTaskForm';
 import TaskList from '../TaskList/TaskList';
 import Footer from '../Footer/Footer';
 
-export default class App extends Component {
-  maxId = 100;
+const App = () => {
+  let taskId = 100;
 
-  state = {
-    todoData: [
-      this.createTodoItem('Drink Tea', '01', '30'),
-      this.createTodoItem('Tidy my room', '01', '00'),
-      this.createTodoItem('Have a lunch', '00', '30'),
-    ],
-    filter: 'all',
+  const [filter, setFilter] = useState('all');
+
+  const createTodoItem = (label, minutes, seconds) => {
+    return {
+      // eslint-disable-next-line no-plusplus
+      id: taskId++,
+      label,
+      completed: false,
+      editing: false,
+      time: new Date(),
+      minutesTimer: minutes,
+      secondsTimer: seconds,
+    };
   };
 
-  handleKeyDown = () => {
-    const { todoData } = this.state;
-    const editingItem = todoData.find((item) => item.editing === true);
-    if (typeof editingItem === 'object') {
-      this.onToggleEditing(editingItem.id);
-    }
-  };
+  const [todoData, setTodoData] = useState([
+    createTodoItem('Drink Tea', '01', '30'),
+    createTodoItem('Tidy my room', '01', '00'),
+    createTodoItem('Have a lunch', '00', '30'),
+  ]);
 
-  deleteItem = (id) => {
-    this.setState(({ todoData }) => {
-      const newArray = todoData.filter((el) => el.id !== id);
-
-      return {
-        todoData: newArray,
-      };
-    });
-  };
-
-  addItem = (text, minutes, seconds) => {
-    this.setState(({ todoData }) => {
-      const newArray = [...todoData, this.createTodoItem(text, minutes, seconds)];
-
-      return {
-        todoData: newArray,
-      };
-    });
-  };
-
-  editItem = (id, text) => {
-    this.setState(({ todoData }) => {
-      const newArray = todoData.map((el) => {
-        if (el.id === id) {
-          return { ...el, label: text, editing: !el.editing };
-        }
-        return el;
-      });
-
-      return {
-        todoData: newArray,
-      };
-    });
-  };
-
-  toggleItem = (arr, id, propName) => {
+  const toggleItem = (arr, id, propName) => {
     return arr.map((el) => {
       if (el.id === id) {
         return { ...el, [propName]: !el[propName] };
@@ -67,24 +36,43 @@ export default class App extends Component {
     });
   };
 
-  onToggleCompleted = (id) => {
-    this.setState(({ todoData }) => {
-      return {
-        todoData: this.toggleItem(todoData, id, 'completed'),
-      };
+  const onToggleEditing = (id) => {
+    setTodoData((prevTodoData) => toggleItem(prevTodoData, id, 'editing'));
+  };
+
+  const onToggleCompleted = (id) => {
+    setTodoData((prevTodoData) => toggleItem(prevTodoData, id, 'completed'));
+  };
+
+  const handleKeyDown = () => {
+    const editingItem = todoData.find((item) => item.editing === true);
+    if (typeof editingItem === 'object') {
+      onToggleEditing(editingItem.id);
+    }
+  };
+
+  const deleteItem = (id) => {
+    setTodoData((prevTodoData) => prevTodoData.filter((el) => el.id !== id));
+  };
+
+  const addItem = (text, minutes, seconds) => {
+    setTodoData((prevTodoData) => [...prevTodoData, createTodoItem(text, minutes, seconds)]);
+  };
+
+  const editItem = (id, text) => {
+    setTodoData((prevTodoData) => {
+      const newArray = prevTodoData.map((el) => {
+        if (el.id === id) {
+          return { ...el, label: text, editing: !el.editing };
+        }
+        return el;
+      });
+      return newArray;
     });
   };
 
-  onToggleEditing = (id) => {
-    this.setState(({ todoData }) => {
-      return {
-        todoData: this.toggleItem(todoData, id, 'editing'),
-      };
-    });
-  };
-
-  filterItems = (items, filter) => {
-    switch (filter) {
+  const filterItems = (items, filterName) => {
+    switch (filterName) {
       case 'all':
         return items;
       case 'active':
@@ -96,62 +84,42 @@ export default class App extends Component {
     }
   };
 
-  onFilterChange = (filter) => {
-    this.setState({ filter });
+  const onFilterChange = (filterName) => {
+    setFilter(() => filterName);
   };
 
-  onClear = () => {
-    this.setState(({ todoData }) => {
-      const newArr = todoData.filter((item) => !item.completed);
-      return {
-        todoData: newArr,
-      };
-    });
+  const onClear = () => {
+    setTodoData((prevTodoData) => prevTodoData.filter((item) => !item.completed));
   };
 
-  createTodoItem(label, minutes, seconds) {
-    return {
-      // eslint-disable-next-line no-plusplus
-      id: this.maxId++,
-      label,
-      completed: false,
-      editing: false,
-      time: new Date(),
-      minutesTimer: minutes,
-      secondsTimer: seconds,
-    };
-  }
-
-  render() {
-    const { todoData, filter } = this.state;
-    const todoCount = todoData.filter((el) => !el.completed).length;
-    const visibleItems = this.filterItems(todoData, filter);
-
-    return (
-      <section className="todoapp">
-        <header className="header">
-          <h1>todos</h1>
-          <NewTaskForm onAdded={this.addItem} />
-        </header>
-        <section className="main">
-          <TaskList
-            todos={visibleItems}
-            onDeleted={this.deleteItem}
-            onToggleCompleted={this.onToggleCompleted}
-            onToggleEditing={this.onToggleEditing}
-            onEdit={this.editItem}
-            onBlur={this.onToggleEditing}
-            onKeyDown={this.handleKeyDown}
-          />
-          <Footer
-            todoCount={todoCount}
-            filter={filter}
-            onFilterChange={this.onFilterChange}
-            onClear={this.onClear}
-            todoData={todoData}
-          />
-        </section>
+  const todoCount = todoData.filter((el) => !el.completed).length;
+  const visibleItems = filterItems(todoData, filter);
+  return (
+    <section className="todoapp">
+      <header className="header">
+        <h1>todos</h1>
+        <NewTaskForm onAdded={addItem} />
+      </header>
+      <section className="main">
+        <TaskList
+          todos={visibleItems}
+          onDeleted={deleteItem}
+          onToggleCompleted={onToggleCompleted}
+          onToggleEditing={onToggleEditing}
+          onEdit={editItem}
+          onBlur={onToggleEditing}
+          onKeyDown={handleKeyDown}
+        />
+        <Footer
+          todoCount={todoCount}
+          filter={filter}
+          onFilterChange={onFilterChange}
+          onClear={onClear}
+          todoData={todoData}
+        />
       </section>
-    );
-  }
-}
+    </section>
+  );
+};
+
+export default App;
