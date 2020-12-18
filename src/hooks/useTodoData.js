@@ -27,6 +27,7 @@ const useTodoData = () => {
       completed: false,
       editing: false,
       time: new Date(),
+      minutesTimer: '00',
       secondsTimer: '30',
     },
   ]);
