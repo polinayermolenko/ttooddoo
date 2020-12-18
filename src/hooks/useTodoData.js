@@ -5,7 +5,7 @@ const useTodoData = () => {
   const [todoData, setTodoData] = useState([
     {
       id: 1,
-      label: 'Drink Coffee',
+      label: 'Drink Tea',
       completed: false,
       editing: false,
       time: new Date(),
@@ -14,7 +14,7 @@ const useTodoData = () => {
     },
     {
       id: 2,
-      label: 'Drink Tee',
+      label: 'Tidy my room',
       completed: false,
       editing: false,
       time: new Date(),
@@ -23,11 +23,10 @@ const useTodoData = () => {
     },
     {
       id: 3,
-      label: 'Drink Milk',
+      label: 'Have a lunch',
       completed: false,
       editing: false,
       time: new Date(),
-      minutesTimer: '00',
       secondsTimer: '30',
     },
   ]);
