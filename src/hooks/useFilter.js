@@ -24,7 +24,7 @@ const useFilter = (todoData) => {
 
   const visibleItems = filterItems(todoData, filter);
 
-  return [filter, onFilterChange, todoCount, visibleItems];
+  return { filter, onFilterChange, todoCount, visibleItems };
 };
 
 export default useFilter;

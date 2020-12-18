@@ -1,73 +1,18 @@
-import React, { useState } from 'react';
+import React from 'react';
 import NewTaskForm from '../NewTaskForm/NewTaskForm';
 import TaskList from '../TaskList/TaskList';
 import Footer from '../Footer/Footer';
 import useFilter from '../../hooks/useFilter';
 import useDeleteItem from '../../hooks/useDeleteItem';
+import useEditingitem from '../../hooks/useEditingItem';
+import useTodoData from '../../hooks/useTodoData';
 
 const App = () => {
-  let taskId = 100;
-  const createTodoItem = (label, minutes, seconds) => {
-    return {
-      // eslint-disable-next-line no-plusplus
-      id: taskId++,
-      label,
-      completed: false,
-      editing: false,
-      time: new Date(),
-      minutesTimer: minutes,
-      secondsTimer: seconds,
-    };
-  };
+  const { todoData, setTodoData, addItem } = useTodoData();
+  const { filter, onFilterChange, todoCount, visibleItems } = useFilter(todoData);
+  const { deleteItem, onClear } = useDeleteItem(setTodoData);
+  const { onToggleCompleted, onToggleEditing, handleKeyDown, editItem } = useEditingitem(setTodoData, todoData);
 
-  const [todoData, setTodoData] = useState([
-    createTodoItem('Drink Tea', '01', '30'),
-    createTodoItem('Tidy my room', '01', '00'),
-    createTodoItem('Have a lunch', '00', '30'),
-  ]);
-
-  const toggleItem = (arr, id, propName) => {
-    return arr.map((el) => {
-      if (el.id === id) {
-        return { ...el, [propName]: !el[propName] };
-      }
-      return el;
-    });
-  };
-
-  const onToggleEditing = (id) => {
-    setTodoData((prevTodoData) => toggleItem(prevTodoData, id, 'editing'));
-  };
-
-  const onToggleCompleted = (id) => {
-    setTodoData((prevTodoData) => toggleItem(prevTodoData, id, 'completed'));
-  };
-
-  const handleKeyDown = () => {
-    const editingItem = todoData.find((item) => item.editing === true);
-    if (typeof editingItem === 'object') {
-      onToggleEditing(editingItem.id);
-    }
-  };
-
-  const addItem = (text, minutes, seconds) => {
-    setTodoData((prevTodoData) => [...prevTodoData, createTodoItem(text, minutes, seconds)]);
-  };
-
-  const editItem = (id, text) => {
-    setTodoData((prevTodoData) => {
-      const newArray = prevTodoData.map((el) => {
-        if (el.id === id) {
-          return { ...el, label: text, editing: !el.editing };
-        }
-        return el;
-      });
-      return newArray;
-    });
-  };
-
-  const [filter, onFilterChange, todoCount, visibleItems] = useFilter(todoData);
-  const [deleteItem, onClear] = useDeleteItem(setTodoData);
   return (
     <section className="todoapp">
       <header className="header">

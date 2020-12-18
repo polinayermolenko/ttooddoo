@@ -7,7 +7,7 @@ const useDeleteItem = (setData) => {
     setData((prevTodoData) => prevTodoData.filter((item) => !item.completed));
   };
 
-  return [deleteItem, onClear];
+  return { deleteItem, onClear };
 };
 
 export default useDeleteItem;
