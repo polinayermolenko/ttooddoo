@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 import NewTaskForm from '../NewTaskForm/NewTaskForm';
 import TaskList from '../TaskList/TaskList';
 import Footer from '../Footer/Footer';
+import useFilter from '../../hooks/useFilter';
+import useDeleteItem from '../../hooks/useDeleteItem';
 
 const App = () => {
   let taskId = 100;
-
-  const [filter, setFilter] = useState('all');
-
   const createTodoItem = (label, minutes, seconds) => {
     return {
       // eslint-disable-next-line no-plusplus
@@ -51,10 +50,6 @@ const App = () => {
     }
   };
 
-  const deleteItem = (id) => {
-    setTodoData((prevTodoData) => prevTodoData.filter((el) => el.id !== id));
-  };
-
   const addItem = (text, minutes, seconds) => {
     setTodoData((prevTodoData) => [...prevTodoData, createTodoItem(text, minutes, seconds)]);
   };
@@ -71,29 +66,8 @@ const App = () => {
     });
   };
 
-  const filterItems = (items, filterName) => {
-    switch (filterName) {
-      case 'all':
-        return items;
-      case 'active':
-        return items.filter((item) => !item.completed);
-      case 'completed':
-        return items.filter((item) => item.completed);
-      default:
-        return items;
-    }
-  };
-
-  const onFilterChange = (filterName) => {
-    setFilter(() => filterName);
-  };
-
-  const onClear = () => {
-    setTodoData((prevTodoData) => prevTodoData.filter((item) => !item.completed));
-  };
-
-  const todoCount = todoData.filter((el) => !el.completed).length;
-  const visibleItems = filterItems(todoData, filter);
+  const [filter, onFilterChange, todoCount, visibleItems] = useFilter(todoData);
+  const [deleteItem, onClear] = useDeleteItem(setTodoData);
   return (
     <section className="todoapp">
       <header className="header">
